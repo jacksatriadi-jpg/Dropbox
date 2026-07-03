@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropbox Bulk Signup Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 8V4H8"/>
+                    <rect width="16" height="12" x="4" y="8" rx="2"/>
+                    <path d="M2 14h2"/>
+                    <path d="M20 14h2"/>
+                    <path d="M15 13v2"/>
+                    <path d="M9 13v2"/>
+                </svg>
+                Dropbox Bulk Signup
+            </h1>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+                <button class="btn-history" id="history-btn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                        <path d="M3 3v5h5"/>
+                        <path d="M12 7v5l4 2"/>
+                    </svg>
+                    Riwayat
+                </button>
+                <div class="version">v1.3.0 (Firefox)</div>
+            </div>
+        </header>
+
+        <main class="grid" style="grid-template-columns:1fr;">
+            <!-- Combined Panel with Tabs -->
+            <section class="panel">
+                <!-- Tab Bar -->
+                <div class="tab-bar">
+                    <button class="tab-btn active" id="tab-pengaturan-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        Pengaturan
+                    </button>
+                    <button class="tab-btn" id="tab-progress-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                            <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                        </svg>
+                        Progress Peninjauan
+                    </button>
+                </div>
+
+                <!-- Tab Pane: Pengaturan -->
+                <div class="tab-pane active" id="tab-pengaturan">
+                    <div class="form-group">
+                        <label for="alias-input">Alias</label>
+                        <input type="text" id="alias-input" value="Alias1" placeholder="Masukkan Alias...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dropbox-url">URL Dropbox / Referal</label>
+                        <input type="text" id="dropbox-url" value="https://www.dropbox.com/register" placeholder="Masukkan URL Dropbox...">
+                    </div>
+
+                    <!-- Email Source Mode -->
+                    <div class="form-group">
+                        <label>Sumber Email</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="email-mode" value="manual" id="em-manual" checked>
+                                📝 Manual Input
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="email-mode" value="auto" id="em-auto">
+                                ⚡ Auto Generate
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="manual-email-wrap">
+                        <label for="emails-list">Daftar Email Bulk (Pisahkan dengan titik koma ';')</label>
+                        <textarea id="emails-list" placeholder="email1@domain.com; email2@domain.com; email3@domain.com;"></textarea>
+                    </div>
+
+                    <div class="form-group" id="auto-email-wrap" style="display: none; flex-direction: column; gap: 0.75rem;">
+                        <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                            <label for="auto-domain">Nama Domain</label>
+                            <input type="text" id="auto-domain" placeholder="kywa.uk" value="kywa.uk">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                            <label for="auto-count">Jumlah Email</label>
+                            <input type="number" id="auto-count" value="10" min="1" max="1000">
+                        </div>
+                    </div>
+
+                    <!-- Password Mode -->
+                    <div class="form-group" style="margin-top: 0.5rem;">
+                        <label>Mode Password</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="password-mode" value="random" id="pw-random" checked>
+                                🎲 Acak (Random)
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="password-mode" value="fixed" id="pw-fixed">
+                                🔒 Tetap (Fixed)
+                            </label>
+                        </div>
+                        <div class="fixed-password-wrap" id="fixed-password-wrap">
+                            <label for="fixed-password-input">Password Tetap</label>
+                            <input type="text" id="fixed-password-input" value="Aa12345678*" placeholder="Masukkan password tetap...">
+                        </div>
+                    </div>
+
+                    <div class="panel-title" style="margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.25rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                        Pengaturan Lanjutan
+                    </div>
+
+                    <div class="grid" style="gap: 1rem;">
+                        <div class="form-group" style="gap: 0.4rem;">
+                            <label for="global-timeout">Global Timeout (detik)</label>
+                            <input type="number" id="global-timeout" value="30" min="10" max="300">
+                        </div>
+                        <div class="form-group" style="gap: 0.4rem;">
+                            <label for="global-retry">Global Retry (percobaan)</label>
+                            <input type="number" id="global-retry" value="3" min="0" max="10">
+                        </div>
+                        <div class="form-group" style="gap: 0.4rem; grid-column: 1 / -1;">
+                            <label for="daemon-timeout">Daemon Timeout (detik)</label>
+                            <input type="number" id="daemon-timeout" value="120" min="30" max="600">
+                        </div>
+                        <div class="form-group" style="gap: 0.4rem; grid-column: 1 / -1;">
+                            <label>Mode User Agent</label>
+                            <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.2rem;">
+                                <label style="font-weight: normal; font-size: 0.9rem; display:flex; align-items:center; gap:0.3rem;">
+                                    <input type="radio" name="ua-mode" value="generate" id="ua-generate-radio" checked>
+                                    Generate Local (Acak)
+                                </label>
+                                <label style="font-weight: normal; font-size: 0.9rem; display:flex; align-items:center; gap:0.3rem;">
+                                    <input type="radio" name="ua-mode" value="extension" id="ua-extension-radio">
+                                    Ekstensi (firefox-profile)
+                                </label>
+                            </div>
+                            <button id="view-ua-btn" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); width: fit-content; margin-top: 0.5rem; display: none;">View UA</button>
+                        </div>
+                        <div class="form-group" style="gap: 0.4rem; grid-column: 1 / -1;" id="device-type-group">
+                            <label>Perangkat (Bisa pilih lebih dari satu)</label>
+                            <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.2rem;">
+                                <label style="font-weight: normal; font-size: 0.9rem; display:flex; align-items:center; gap:0.3rem;"><input type="checkbox" id="dt-desktop" checked> Desktop</label>
+                                <label style="font-weight: normal; font-size: 0.9rem; display:flex; align-items:center; gap:0.3rem;"><input type="checkbox" id="dt-mobile" checked> Mobile</label>
+                                <label style="font-weight: normal; font-size: 0.9rem; display:flex; align-items:center; gap:0.3rem;"><input type="checkbox" id="dt-tablet" checked> Tablet</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="gap: 0.4rem; grid-column: 1 / -1;" id="connection-type-group">
+                        <label>Koneksi (Bisa pilih lebih dari satu)</label>
+                        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.2rem;">
+                            <label style="font-weight: normal; font-size: 0.9rem; display:flex; align-items:center; gap:0.3rem;"><input type="checkbox" id="use-direct" checked> Direct Connection</label>
+                            <label style="font-weight: normal; font-size: 0.9rem; display:flex; align-items:center; gap:0.3rem;"><input type="checkbox" id="use-warp" checked> Warp+Socks5</label>
+                            <label style="font-weight: normal; font-size: 0.9rem; display:flex; align-items:center; gap:0.3rem;"><input type="checkbox" id="use-socks5"> Socks5 Only</label>
+                            <label style="font-weight: normal; font-size: 0.9rem; display:flex; align-items:center; gap:0.3rem;"><input type="checkbox" id="use-psiphon"> Psiphon</label>
+                        </div>
+                    </div>
+                    <div class="form-group" id="socks5-input-group" style="display: none; gap: 0.4rem; grid-column: 1 / -1;">
+                        <label for="socks5-host">Socks5 Host:Port</label>
+                        <input type="text" id="socks5-host" placeholder="Contoh: 127.0.0.1:1080">
+                    </div>
+
+                    <!-- Lain-Lain -->
+                    <div class="form-group" id="misc-group" style="gap: 0.75rem; grid-column: 1 / -1;">
+                        <label>Lain-Lain</label>
+                        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                            <label style="font-weight: normal; font-size: 0.9rem; display:flex; align-items:center; gap:0.3rem;">
+                                <input type="checkbox" id="debug-proxy"> Debug Koneksi VPN/Proxy
+                            </label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-top: 0.25rem; flex-wrap: wrap;">
+                            <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+                                <label for="idle-timeout-input" style="font-size: 0.82rem; color: #a1a1aa;">Idle Timeout (detik)</label>
+                                <input type="number" id="idle-timeout-input" value="180" min="30" max="3600" style="width: 130px; padding: 0.5rem 0.75rem;">
+                            </div>
+                            <div style="font-size: 0.78rem; color: #71717a; margin-top: 1.2rem;">Waktu tunggu sebelum status berubah ke IDLE</div>
+                        </div>
+                    </div>
+
+                    <!-- Apply Button -->
+                    <div style="display: flex; justify-content: flex-end; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05);">
+                        <button class="apply-btn" id="apply-settings-btn">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6 9 17l-5-5"/>
+                            </svg>
+                            Apply
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab Pane: Progress Peninjauan -->
+                <div class="tab-pane" id="tab-progress">
+                    <div class="progress-box">
+                        <div class="progress-ring">
+                            <svg width="120" height="120">
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#a78bfa" />
+                                        <stop offset="100%" stop-color="#6366f1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="progress-ring-bg" cx="60" cy="60" r="50"></circle>
+                                <circle class="progress-ring-indicator" id="progress-indicator" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+                            </svg>
+                            <div class="progress-text" id="progress-percentage">0%</div>
+                        </div>
+
+                        <div class="status-badge status-idle" id="status-badge">
+                            <span id="status-text">Standby</span>
+                        </div>
+
+                        <div style="font-size: 0.85rem; color: #a1a1aa; text-align: center;" id="progress-detail">
+                            Menunggu input pendaftaran...
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-card stat-success">
+                                <div class="stat-value" id="stat-success-count">0</div>
+                                <div class="stat-label">Sukses</div>
+                            </div>
+                            <div class="stat-card stat-failed">
+                                <div class="stat-value" id="stat-failed-count">0</div>
+                                <div class="stat-label">Gagal</div>
+                            </div>
+                            <div class="stat-card stat-verif">
+                                <div class="stat-value" id="stat-verif-count">0</div>
+                                <div class="stat-label">Verif</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons (always visible) -->
+                <div class="btn-group" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.25rem; margin-top: 0.25rem;">
+                    <button class="btn" id="start-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="6 3 20 12 6 21 6 3"/>
+                        </svg>
+                        Mulai Pendaftaran
+                    </button>
+                    <button class="btn btn-danger" id="stop-btn" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                        </svg>
+                        Hentikan
+                    </button>
+                </div>
+            </section>
+
+            <!-- Real-time Log Console -->
+            <section class="log-container">
+                <div class="panel-title" style="justify-content: space-between;">
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 17V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11"/>
+                            <path d="M12 20h.01"/>
+                            <path d="M16 20h.01"/>
+                            <path d="M8 20h.01"/>
+                        </svg>
+                        Log Konsol Real-time
+                    </span>
+                    <button id="clear-btn" style="background: none; border: none; color: #71717a; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.25rem;">
+                        Hapus Log
+                    </button>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 0.5rem; font-size: 0.85rem; color: #a1a1aa; padding: 0 0.5rem;" id="console-info">
+                    <span>Alias: <strong style="color:#fff;" id="info-alias">-</strong></span>
+                    <span>Mode: <strong style="color:#fff;" id="info-mode">-</strong></span>
+                    <span>Email: <strong style="color:#fff;" id="info-email">-</strong></span>
+                    <span>IP: <strong style="color:#fff;" id="info-ip">-</strong></span>
+                    <span>UA: <strong style="color:#fff;" id="info-ua">-</strong></span>
+                    <span>Timeout: <strong style="color:#fff;" id="info-timeout">0</strong></span>
+                    <span>Error: <strong style="color:#fff;" id="info-error">0</strong></span>
+                </div>
+                <div class="log-panel" id="log-panel">
+                    <div class="log-line log-info">[Info] Dashboard siap. Silakan masukkan parameter pendaftaran.</div>
+                </div>
+            </section>
+            
+            <!-- Debug VPN/Proxy Log Console -->
+            <section class="log-container" id="vpn-log-container" style="display: none; margin-top: 1rem;">
+                <div class="panel-title" style="justify-content: space-between;">
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                        Log Debug VPN/Proxy
+                    </span>
+                    <button id="clear-vpn-btn" style="background: none; border: none; color: #71717a; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.25rem;">
+                        Hapus Log VPN
+                    </button>
+                </div>
+                <div class="log-panel" id="vpn-log-panel">
+                    <div class="log-line log-info">[Info] Menunggu aktivitas debug VPN/Proxy...</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ── View UA Modal ─────────────────────────────────── -->
+    <div class="modal-backdrop" id="ua-modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>Daftar User Agent</h3>
+                <button class="close-modal" id="close-ua-modal">&times;</button>
+            </div>
+            <div style="padding: 1rem; overflow-y: auto; max-height: 400px;">
+                <h4 style="margin-top:0;">Desktop</h4>
+                <ul id="ua-list-desktop" style="font-size: 0.85rem; color: #a1a1aa; padding-left: 1.2rem; word-break: break-all; margin-bottom: 1rem;"></ul>
+                
+                <h4>Mobile</h4>
+                <ul id="ua-list-mobile" style="font-size: 0.85rem; color: #a1a1aa; padding-left: 1.2rem; word-break: break-all; margin-bottom: 1rem;"></ul>
+                
+                <h4>Tablet</h4>
+                <ul id="ua-list-tablet" style="font-size: 0.85rem; color: #a1a1aa; padding-left: 1.2rem; word-break: break-all;"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── History Modal ─────────────────────────────────── -->
+    <div class="modal-backdrop" id="history-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>📋 Riwayat Pendaftaran</h2>
+                <button class="modal-close" id="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="history-content">
+                    <div class="empty-state">Memuat riwayat...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline btn-sm" id="history-clear-btn">🗑 Hapus Semua Riwayat</button>
+                <button class="btn btn-sm" id="history-refresh-btn">↻ Perbarui</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Session Idle Warning Modal ────────────────────── -->
+    <div class="modal-backdrop" id="idle-modal">
+        <div class="modal" style="max-width: 450px; text-align: center;">
+            <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0.5rem;">
+                <h2 style="font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem; color: #fbbf24;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    Peringatan Sesi Idle
+                </h2>
+            </div>
+            <div class="modal-body" style="padding: 1rem 1.5rem; text-align: center; overflow: hidden;">
+                <p style="font-size: 0.95rem; color: #d4d4d8; line-height: 1.5;">
+                    Sesi idle terdeteksi. Worker akan dinonaktifkan dalam <strong style="color: #fbbf24; font-size: 1.15rem; font-family: 'Fira Code', monospace;" id="idle-countdown">60</strong> detik.
+                </p>
+                <p style="font-size: 0.9rem; color: #a1a1aa; margin-top: 0.75rem;">
+                    Apakah Anda ingin menambah durasi sesi pendaftaran?
+                </p>
+            </div>
+            <div class="modal-footer" style="justify-content: center; border-top: none; gap: 1rem; padding-top: 0.5rem; padding-bottom: 1.5rem;">
+                <button class="btn btn-sm" id="idle-yes-btn" style="min-width: 100px; background: linear-gradient(135deg, #6366f1, #4f46e5);">Ya</button>
+                <button class="btn btn-outline btn-sm" id="idle-no-btn" style="min-width: 100px;">Tidak</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const aliasInput          = document.getElementById('alias-input');
+        const dropboxUrlInput     = document.getElementById('dropbox-url');
+        const emailsListInput     = document.getElementById('emails-list');
+        
+        const emManualRadio        = document.getElementById('em-manual');
+        const emAutoRadio          = document.getElementById('em-auto');
+        const manualEmailWrap      = document.getElementById('manual-email-wrap');
+        const autoEmailWrap        = document.getElementById('auto-email-wrap');
+        const autoDomainInput     = document.getElementById('auto-domain');
+        const autoCountInput      = document.getElementById('auto-count');
+        
+        const globalTimeoutInput  = document.getElementById('global-timeout');
+        const globalRetryInput    = document.getElementById('global-retry');
+        const daemonTimeoutInput  = document.getElementById('daemon-timeout');
+        
+        const useDirectCheckbox   = document.getElementById('use-direct');
+        const useWarpCheckbox     = document.getElementById('use-warp');
+        const usePsiphonCheckbox  = document.getElementById('use-psiphon');
+        
+        const pwRandomRadio       = document.getElementById('pw-random');
+        const pwFixedRadio        = document.getElementById('pw-fixed');
+        const fixedPasswordWrap   = document.getElementById('fixed-password-wrap');
+        const fixedPasswordInput  = document.getElementById('fixed-password-input');
+
+        const uaGenerateRadio     = document.getElementById('ua-generate-radio');
+        const uaExtensionRadio    = document.getElementById('ua-extension-radio');
+        const deviceTypeGroup     = document.getElementById('device-type-group');
+        
+        const infoAlias = document.getElementById('info-alias');
+        const infoMode  = document.getElementById('info-mode');
+        const infoEmail = document.getElementById('info-email');
+        const infoIp    = document.getElementById('info-ip');
+        const infoUa    = document.getElementById('info-ua');
+        const infoTimeout = document.getElementById('info-timeout');
+        const infoError   = document.getElementById('info-error');
+        
+        const useSocks5Checkbox = document.getElementById('use-socks5');
+        const socks5InputGroup = document.getElementById('socks5-input-group');
+        const socks5HostInput = document.getElementById('socks5-host');
+
+        const debugProxyCheckbox  = document.getElementById('debug-proxy');
+        const vpnLogContainer     = document.getElementById('vpn-log-container');
+        const vpnLogPanel         = document.getElementById('vpn-log-panel');
+        const clearVpnBtn         = document.getElementById('clear-vpn-btn');
+
+        debugProxyCheckbox.addEventListener('change', (e) => {
+            vpnLogContainer.style.display = e.target.checked ? 'flex' : 'none';
+            saveSettings();
+        });
+
+        clearVpnBtn.addEventListener('click', () => { vpnLogPanel.innerHTML = ''; });
+
+        const viewUaBtn = document.getElementById('view-ua-btn');
+        const uaModal = document.getElementById('ua-modal');
+        const closeUaModal = document.getElementById('close-ua-modal');
+
+        useSocks5Checkbox.addEventListener('change', (e) => {
+            socks5InputGroup.style.display = e.target.checked ? 'flex' : 'none';
+        });
+        
+        const startBtn            = document.getElementById('start-btn');
+        const stopBtn             = document.getElementById('stop-btn');
+        const clearBtn            = document.getElementById('clear-btn');
+        
+        const logPanel            = document.getElementById('log-panel');
+        const progressIndicator   = document.getElementById('progress-indicator');
+        const progressPercentage  = document.getElementById('progress-percentage');
+        const statusBadge         = document.getElementById('status-badge');
+        const statusText          = document.getElementById('status-text');
+        const progressDetail      = document.getElementById('progress-detail');
+        const successCountEl      = document.getElementById('stat-success-count');
+        const failedCountEl       = document.getElementById('stat-failed-count');
+
+        // History modal
+        const historyBtn           = document.getElementById('history-btn');
+        const historyModal         = document.getElementById('history-modal');
+        const modalCloseBtn        = document.getElementById('modal-close-btn');
+        const historyContent       = document.getElementById('history-content');
+        const historyRefreshBtn    = document.getElementById('history-refresh-btn');
+        const historyClearBtn      = document.getElementById('history-clear-btn');
+
+        // Idle modal
+        const idleModal            = document.getElementById('idle-modal');
+        const idleCountdown        = document.getElementById('idle-countdown');
+        const idleYesBtn           = document.getElementById('idle-yes-btn');
+        const idleNoBtn            = document.getElementById('idle-no-btn');
+
+        // Idle timeout input
+        const idleTimeoutInput     = document.getElementById('idle-timeout-input');
+
+        // ── Tab Switching ──────────────────────────────────────
+        const tabPengaturanBtn = document.getElementById('tab-pengaturan-btn');
+        const tabProgressBtn   = document.getElementById('tab-progress-btn');
+        const tabPengaturan    = document.getElementById('tab-pengaturan');
+        const tabProgress      = document.getElementById('tab-progress');
+
+        function switchTab(tab) {
+            if (tab === 'pengaturan') {
+                tabPengaturanBtn.classList.add('active');
+                tabProgressBtn.classList.remove('active');
+                tabPengaturan.classList.add('active');
+                tabProgress.classList.remove('active');
+            } else {
+                tabProgressBtn.classList.add('active');
+                tabPengaturanBtn.classList.remove('active');
+                tabProgress.classList.add('active');
+                tabPengaturan.classList.remove('active');
+            }
+        }
+
+        tabPengaturanBtn.addEventListener('click', () => switchTab('pengaturan'));
+        tabProgressBtn.addEventListener('click', () => switchTab('progress'));
+
+        // Auto-switch to Progress tab when processing starts
+        // (will be called from startBtn click handler below)
+
+        // ── Apply Settings Button ──────────────────────────────
+        const applySettingsBtn = document.getElementById('apply-settings-btn');
+
+        async function applySettings() {
+            const idleTimeout = parseInt(idleTimeoutInput.value) || 180;
+            try {
+                applySettingsBtn.disabled = true;
+                applySettingsBtn.textContent = 'Menerapkan...';
+                const res = await fetch('/api/settings/apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idleTimeout })
+                });
+                if (res.ok) {
+                    applySettingsBtn.textContent = '✓ Diterapkan';
+                    applySettingsBtn.style.background = 'linear-gradient(135deg, #059669, #047857)';
+                    setTimeout(() => {
+                        applySettingsBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Apply';
+                        applySettingsBtn.disabled = false;
+                    }, 1500);
+                } else {
+                    throw new Error('Gagal');
+                }
+            } catch (_) {
+                applySettingsBtn.textContent = '✗ Gagal';
+                applySettingsBtn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                setTimeout(() => {
+                    applySettingsBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Apply';
+                    applySettingsBtn.style.background = '';
+                    applySettingsBtn.disabled = false;
+                }, 1500);
+            }
+            saveSettings();
+        }
+
+        applySettingsBtn.addEventListener('click', applySettings);
+
+        // ── UI Toggles ─────────────────────────────────────────
+
+        function updatePasswordModeUI() {
+            const isFixed = pwFixedRadio.checked;
+            fixedPasswordWrap.classList.toggle('visible', isFixed);
+        }
+        pwRandomRadio.addEventListener('change', updatePasswordModeUI);
+        pwFixedRadio.addEventListener('change', updatePasswordModeUI);
+        updatePasswordModeUI();
+
+        function updateEmailModeUI() {
+            if (emManualRadio.checked) {
+                manualEmailWrap.style.display = 'block';
+                autoEmailWrap.style.display = 'none';
+            } else {
+                manualEmailWrap.style.display = 'none';
+                autoEmailWrap.style.display = 'flex';
+            }
+        }
+        emManualRadio.addEventListener('change', updateEmailModeUI);
+        emAutoRadio.addEventListener('change', updateEmailModeUI);
+        updateEmailModeUI();
+
+        function updateUaModeUI() {
+            const isGenerate = uaGenerateRadio.checked;
+            deviceTypeGroup.style.display = isGenerate ? 'flex' : 'none';
+            viewUaBtn.style.display = isGenerate ? 'inline-block' : 'none';
+        }
+        uaGenerateRadio.addEventListener('change', updateUaModeUI);
+        uaExtensionRadio.addEventListener('change', updateUaModeUI);
+        updateUaModeUI();
+
+        // ── UA Fetching ────────────────────────────────────────
+        viewUaBtn.addEventListener('click', async () => {
+            try {
+                const res = await fetch('/api/uas');
+                const data = await res.json();
+                document.getElementById('ua-list-desktop').innerHTML = (data.desktop || []).map(ua => `<li>${ua}</li>`).join('');
+                document.getElementById('ua-list-mobile').innerHTML = (data.mobile || []).map(ua => `<li>${ua}</li>`).join('');
+                document.getElementById('ua-list-tablet').innerHTML = (data.tablet || []).map(ua => `<li>${ua}</li>`).join('');
+                uaModal.classList.add('open');
+            } catch (err) {
+                alert('Gagal mengambil data User Agent');
+            }
+        });
+        closeUaModal.addEventListener('click', () => uaModal.classList.remove('open'));
+        uaModal.addEventListener('click', (e) => { if (e.target === uaModal) uaModal.classList.remove('open'); });
+
+        // ── LocalStorage Settings ──────────────────────────────
+        function saveSettings() {
+            const settings = {
+                alias: aliasInput.value,
+                url: dropboxUrlInput.value,
+                emails: emailsListInput.value,
+                domain: autoDomainInput.value,
+                count: autoCountInput.value,
+                useDirect: useDirectCheckbox.checked,
+                useWarp: useWarpCheckbox.checked,
+                useSocks5: useSocks5Checkbox.checked,
+                usePsiphon: usePsiphonCheckbox.checked,
+                socks5Host: socks5HostInput.value,
+                passwordMode: pwFixedRadio.checked ? 'fixed' : 'random',
+                fixedPassword: fixedPasswordInput.value,
+                emailMode: emAutoRadio.checked ? 'auto' : 'manual',
+                globalTimeout: globalTimeoutInput.value,
+                globalRetry: globalRetryInput.value,
+                daemonTimeout: daemonTimeoutInput.value,
+                uaMode: uaGenerateRadio.checked ? 'generate' : 'extension',
+                dtDesktop: document.getElementById('dt-desktop').checked,
+                dtMobile: document.getElementById('dt-mobile').checked,
+                dtTablet: document.getElementById('dt-tablet').checked,
+                debugProxy: debugProxyCheckbox.checked,
+                idleTimeout: idleTimeoutInput.value
+            };
+            localStorage.setItem('dropbox_signup_settings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            try {
+                const raw = localStorage.getItem('dropbox_signup_settings');
+                if (raw) {
+                    const settings = JSON.parse(raw);
+                    if (settings.alias) aliasInput.value = settings.alias;
+                    if (settings.url) dropboxUrlInput.value = settings.url;
+                    if (settings.emails) emailsListInput.value = settings.emails;
+                    if (settings.domain) autoDomainInput.value = settings.domain;
+                    if (settings.count) autoCountInput.value = settings.count;
+                    if (settings.globalTimeout) globalTimeoutInput.value = settings.globalTimeout;
+                    if (settings.globalRetry) globalRetryInput.value = settings.globalRetry;
+                    if (settings.daemonTimeout) daemonTimeoutInput.value = settings.daemonTimeout;
+                    if (settings.uaMode) {
+                        if (settings.uaMode === 'generate') uaGenerateRadio.checked = true;
+                        else uaExtensionRadio.checked = true;
+                    }
+                    if (settings.dtDesktop !== undefined) document.getElementById('dt-desktop').checked = settings.dtDesktop;
+                    if (settings.dtMobile !== undefined) document.getElementById('dt-mobile').checked = settings.dtMobile;
+                    if (settings.dtTablet !== undefined) document.getElementById('dt-tablet').checked = settings.dtTablet;
+                    
+                    updateUaModeUI();
+                    
+                    if (settings.useDirect !== undefined) useDirectCheckbox.checked = settings.useDirect;
+                    if (settings.useWarp !== undefined) useWarpCheckbox.checked = settings.useWarp;
+                    if (settings.useSocks5 !== undefined) useSocks5Checkbox.checked = settings.useSocks5;
+                    if (settings.usePsiphon !== undefined) usePsiphonCheckbox.checked = settings.usePsiphon;
+                    if (settings.socks5Host) socks5HostInput.value = settings.socks5Host;
+                    
+                    if (settings.debugProxy !== undefined) {
+                        debugProxyCheckbox.checked = settings.debugProxy;
+                    }
+                    vpnLogContainer.style.display = debugProxyCheckbox.checked ? 'flex' : 'none';
+                    
+                    if (settings.passwordMode === 'fixed') {
+                        pwFixedRadio.checked = true;
+                    } else {
+                        pwRandomRadio.checked = true;
+                    }
+                    if (settings.fixedPassword) fixedPasswordInput.value = settings.fixedPassword;
+
+                    if (settings.emailMode === 'auto') {
+                        emAutoRadio.checked = true;
+                    } else {
+                        emManualRadio.checked = true;
+                    }
+
+                    if (settings.idleTimeout) idleTimeoutInput.value = settings.idleTimeout;
+                    updatePasswordModeUI();
+                    updateEmailModeUI();
+                    socks5InputGroup.style.display = useSocks5Checkbox.checked ? 'flex' : 'none';
+                }
+            } catch (e) {}
+        }
+        
+        // Save settings on any change
+        const inputsToSave = [
+            aliasInput, dropboxUrlInput, emailsListInput, autoDomainInput, autoCountInput, 
+            globalTimeoutInput, globalRetryInput, daemonTimeoutInput, useDirectCheckbox, useWarpCheckbox, 
+            useSocks5Checkbox, usePsiphonCheckbox, socks5HostInput, pwFixedRadio, pwRandomRadio, fixedPasswordInput, emManualRadio, emAutoRadio, uaGenerateRadio, uaExtensionRadio,
+            debugProxyCheckbox, idleTimeoutInput
+        ];
+        inputsToSave.forEach(el => el.addEventListener('change', saveSettings));
+        inputsToSave.forEach(el => el.addEventListener('keyup', saveSettings));
+
+        // Load settings on boot
+        loadSettings();
+
+        // ── History modal ─────────────────────────────────────
+        let historyData = [];
+        let historyCurrentPage = 1;
+        const historyPageSize = 32;
+
+        function formatDate(iso) {
+            try {
+                const d = new Date(iso);
+                return d.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+            } catch (_) { return iso; }
+        }
+
+        async function loadHistory() {
+            historyContent.innerHTML = '<div class="empty-state">Memuat riwayat...</div>';
+            try {
+                const res = await fetch('/api/history');
+                historyData = await res.json();
+                historyCurrentPage = 1;
+                renderHistoryPage();
+            } catch (e) {
+                historyContent.innerHTML = `<div class="empty-state">Gagal memuat riwayat: ${e.message}</div>`;
+            }
+        }
+
+        function renderHistoryPage() {
+            if (!historyData || !historyData.length) {
+                historyContent.innerHTML = '<div class="empty-state">Belum ada riwayat pendaftaran.</div>';
+                return;
+            }
+
+            // Group by Alias for Summary
+            const summaryObj = {};
+            historyData.forEach(r => {
+                const al = r.alias || '-';
+                if (!summaryObj[al]) summaryObj[al] = { success: 0, failed: 0, verif: 0, total: 0 };
+                summaryObj[al].total++;
+                if (r.status === 'success') summaryObj[al].success++;
+                else if (r.status === 'failed') summaryObj[al].failed++;
+                else if (r.status === 'VERIF') summaryObj[al].verif++;
+            });
+
+            const summaryRows = Object.keys(summaryObj).map(al => {
+                const s = summaryObj[al];
+                return `<tr>
+                    <td style="font-weight:600; color:#e4e4e7;">${al}</td>
+                    <td style="color:#34d399;">${s.success}</td>
+                    <td style="color:#fbbf24;">${s.verif}</td>
+                    <td style="color:#f87171;">${s.failed}</td>
+                    <td style="color:#a1a1aa;">${s.total}</td>
+                </tr>`;
+            }).join('');
+
+            const summaryTable = `
+                <h3 style="margin-bottom: 0.75rem; font-size: 0.95rem; color: #e4e4e7;">Ringkasan Berdasarkan Alias</h3>
+                <table class="history-table" style="margin-bottom: 1.5rem;">
+                    <thead>
+                        <tr>
+                            <th>Alias</th>
+                            <th>Sukses</th>
+                            <th>Verif</th>
+                            <th>Gagal</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>${summaryRows}</tbody>
+                </table>
+            `;
+
+            // Paginate Detail
+            const totalRecords = historyData.length;
+            const totalPages = Math.ceil(totalRecords / historyPageSize) || 1;
+
+            if (historyCurrentPage > totalPages) historyCurrentPage = totalPages;
+            if (historyCurrentPage < 1) historyCurrentPage = 1;
+
+            const startIndex = (historyCurrentPage - 1) * historyPageSize;
+            const endIndex = Math.min(startIndex + historyPageSize, totalRecords);
+            const pageData = historyData.slice(startIndex, endIndex);
+
+            const rows = pageData.map(r => `
+                <tr>
+                    <td style="font-family: monospace; font-size: 0.85rem; color: #38bdf8;">${r.ip || '-'}</td>
+                    <td>${formatDate(r.timestamp)}</td>
+                    <td>${r.email}</td>
+                    <td>${r.password}</td>
+                    <td><span class="badge-${r.status}">${r.status}</span></td>
+                    <td style="font-size:0.75rem;color:#71717a;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.alias}">${r.alias || '-'}</td>
+                    <td style="color:#fbbf24;">${r.timeouts || 0}</td>
+                    <td style="color:#f87171;">${r.errors || 0}</td>
+                    <td style="font-size:0.72rem;color:#a1a1aa;white-space:nowrap;">${r.ua || '-'}</td>
+                </tr>`).join('');
+
+            const detailTable = `
+                <h3 style="margin-bottom: 0.75rem; font-size: 0.95rem; color: #e4e4e7;">Detail Riwayat (${totalRecords} record)</h3>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>IP Address</th>
+                            <th>Waktu</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th>Status</th>
+                            <th>Alias</th>
+                            <th>Timeouts</th>
+                            <th>Errors</th>
+                            <th>User Agent</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+
+            let paginationHtml = '';
+            if (totalPages > 1) {
+                paginationHtml = `
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            Menampilkan ${startIndex + 1} - ${endIndex} dari ${totalRecords} record (Halaman ${historyCurrentPage} dari ${totalPages})
+                        </div>
+                        <div class="pagination-buttons">
+                            <button class="btn-outline btn-sm" id="prev-page-btn" ${historyCurrentPage === 1 ? 'disabled' : ''}>Sebelumnya</button>
+                            <button class="btn-outline btn-sm" id="next-page-btn" ${historyCurrentPage === totalPages ? 'disabled' : ''}>Selanjutnya</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            historyContent.innerHTML = summaryTable + detailTable + paginationHtml;
+
+            // Bind page switch click handlers
+            if (totalPages > 1) {
+                document.getElementById('prev-page-btn').addEventListener('click', () => {
+                    if (historyCurrentPage > 1) {
+                        historyCurrentPage--;
+                        renderHistoryPage();
+                    }
+                });
+                document.getElementById('next-page-btn').addEventListener('click', () => {
+                    if (historyCurrentPage < totalPages) {
+                        historyCurrentPage++;
+                        renderHistoryPage();
+                    }
+                });
+            }
+        }
+
+        // Highlight selected row in history content tables on click
+        historyContent.addEventListener('click', (e) => {
+            const tr = e.target.closest('.history-table tbody tr');
+            if (tr) {
+                const table = tr.closest('.history-table');
+                table.querySelectorAll('tbody tr').forEach(row => row.classList.remove('highlighted'));
+                tr.classList.add('highlighted');
+            }
+        });
+
+        historyBtn.addEventListener('click', () => {
+            historyModal.classList.add('open');
+            loadHistory();
+            fetch('/api/worker-stat/boot', { method: 'POST' }).catch(() => {});
+        });
+
+        modalCloseBtn.addEventListener('click', () => historyModal.classList.remove('open'));
+        historyModal.addEventListener('click', (e) => { if (e.target === historyModal) historyModal.classList.remove('open'); });
+
+        historyRefreshBtn.addEventListener('click', loadHistory);
+
+        historyClearBtn.addEventListener('click', async () => {
+            if (!confirm('Hapus semua riwayat pendaftaran?')) return;
+            await fetch('/api/history', { method: 'DELETE' });
+            loadHistory();
+        });
+
+        // ── WebSocket Connection ──────────────────────────────
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}`;
+        let socket;
+        let pingInterval;
+        let lastPongReceived = Date.now();
+
+        function connectWebSocket() {
+            if (socket && socket.readyState === WebSocket.CONNECTING) return;
+            
+            socket = new WebSocket(wsUrl);
+
+            socket.onopen = () => {
+                appendLog('log-success', '[System] Terhubung ke WebSockets server.');
+                appendLog('log-info', `[Info] User Agent: ${navigator.userAgent}`);
+                fetch('https://api.ipify.org?format=json')
+                    .then(res => res.json())
+                    .then(data => appendLog('log-info', `[Info] Public IP (client): ${data.ip}`))
+                    .catch(() => {});
+                    
+                lastPongReceived = Date.now();
+                if (pingInterval) clearInterval(pingInterval);
+                pingInterval = setInterval(() => {
+                    if (socket.readyState === WebSocket.OPEN) {
+                        socket.send(JSON.stringify({ action: 'ping' }));
+                        if (Date.now() - lastPongReceived > 15000) {
+                            appendLog('log-warn', '[System] Koneksi terputus (Ping timeout). Reconnecting...');
+                            socket.close();
+                        }
+                    }
+                }, 5000);
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'pong') {
+                    lastPongReceived = Date.now();
+                } else if (data.type === 'sync_state') {
+                    if (data.workerStatus) {
+                        updateWorkerStatusDisplay(data.workerStatus);
+                    }
+                    if ((data.workerStatus === 'BOOT' || data.workerStatus === 'FINISH') && data.secondsLeft !== undefined && data.secondsLeft > 0 && data.secondsLeft <= 60) {
+                        showIdleWarning(data.secondsLeft);
+                    } else {
+                        hideIdleWarning();
+                    }
+                    if (data.state) {
+                        if (data.state.logs && data.state.logs.length > 0) {
+                            logPanel.innerHTML = '';
+                            data.state.logs.forEach(log => handleLogMessage(log.message));
+                        }
+                        if (data.state.progress && data.state.progress.total > 0) {
+                            updateProgress(data.state.progress.current, data.state.progress.total, data.state.progress.status, data.state.progress.successCount, data.state.progress.failedCount, data.state.progress.verifCount);
+                        }
+                        if (data.state.info) {
+                            if (data.state.info.alias) infoAlias.innerText = data.state.info.alias;
+                            if (data.state.info.mode) infoMode.innerText = data.state.info.mode;
+                            if (data.state.info.email) infoEmail.innerText = data.state.info.email;
+                            if (data.state.info.ip) infoIp.innerText = data.state.info.ip;
+                            if (data.state.info.ua) infoUa.innerText = data.state.info.ua;
+                        }
+                        if (data.state.stats) {
+                            if (data.state.stats.timeouts !== undefined) infoTimeout.innerText = data.state.stats.timeouts;
+                            if (data.state.stats.errors !== undefined) infoError.innerText = data.state.stats.errors;
+                        }
+                    }
+                } else if (data.type === 'log') {
+                    handleLogMessage(data.message);
+                } else if (data.type === 'vpn_log') {
+                    handleVpnLogMessage(data.message);
+                } else if (data.type === 'info') {
+                    if (data.info.alias) infoAlias.innerText = data.info.alias;
+                    if (data.info.mode) infoMode.innerText = data.info.mode;
+                    if (data.info.email) infoEmail.innerText = data.info.email;
+                    if (data.info.ip) infoIp.innerText = data.info.ip;
+                    if (data.info.ua) infoUa.innerText = data.info.ua;
+                } else if (data.type === 'email_stats') {
+                    if (data.timeouts !== undefined) infoTimeout.innerText = data.timeouts;
+                    if (data.errors !== undefined) infoError.innerText = data.errors;
+                } else if (data.type === 'progress') {
+                    updateProgress(data.current, data.total, data.status, data.successCount, data.failedCount, data.verifCount);
+                } else if (data.type === 'status') {
+                    updateStatus(data.status);
+                } else if (data.type === 'worker_status') {
+                    updateWorkerStatusDisplay(data.status);
+                } else if (data.type === 'idle_warning') {
+                    showIdleWarning(data.secondsLeft);
+                } else if (data.type === 'idle_warning_cancel') {
+                    hideIdleWarning();
+                } else if (data.type === 'email_success') {
+                    removeEmailFromUIList(data.email);
+                }
+            };
+
+            socket.onclose = () => {
+                if (pingInterval) clearInterval(pingInterval);
+                appendLog('log-err', '[System] Koneksi WebSockets terputus. Mencoba menghubungkan kembali...');
+                setTimeout(connectWebSocket, 3000);
+            };
+        }
+
+        connectWebSocket();
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                if (!socket || socket.readyState !== WebSocket.OPEN) {
+                    appendLog('log-info', '[System] Layar aktif kembali, merestart koneksi...');
+                    if (socket && socket.readyState !== WebSocket.CLOSED) socket.close();
+                    else connectWebSocket();
+                } else {
+                    socket.send(JSON.stringify({ action: 'ping' }));
+                }
+            }
+        });
+
+        function removeEmailFromUIList(successEmail) {
+            const rawText = emailsListInput.value;
+            const emails = rawText.split(';')
+                                  .map(e => e.trim())
+                                  .filter(e => e.length > 0 && e.toLowerCase() !== successEmail.toLowerCase());
+            emailsListInput.value = emails.join('; ') + (emails.length > 0 ? ';' : '');
+        }
+
+        function appendLog(className, text) {
+            const line = document.createElement('div');
+            line.className = `log-line ${className}`;
+            line.innerText = text;
+            logPanel.appendChild(line);
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+
+        function handleLogMessage(msg) {
+            let className = 'log-info';
+            const lower = msg.toLowerCase();
+
+            if (lower.includes('error') || lower.includes('gagal') || lower.includes('⚠️')) {
+                className = 'log-err';
+            } else if (lower.includes('berhasil') || lower.includes('✓') || lower.includes('selesai')) {
+                className = 'log-success';
+            } else if (lower.includes('peringatan') || lower.includes('warning')) {
+                className = 'log-warn';
+            } else if (lower.includes('===') || lower.includes('---')) {
+                className = 'log-divider';
+            }
+
+            appendLog(className, msg);
+        }
+
+        function handleVpnLogMessage(msg) {
+            let className = 'log-info';
+            const lower = msg.toLowerCase();
+
+            if (lower.includes('error') || lower.includes('failed') || lower.includes('fail') || lower.includes('⚠️') || lower.includes('critical')) {
+                className = 'log-err';
+            } else if (lower.includes('success') || lower.includes('connected') || lower.includes('✓') || lower.includes('active')) {
+                className = 'log-success';
+            } else if (lower.includes('warning') || lower.includes('warn') || lower.includes('peringatan')) {
+                className = 'log-warn';
+            }
+
+            const line = document.createElement('div');
+            line.className = `log-line ${className}`;
+            line.innerText = msg;
+            vpnLogPanel.appendChild(line);
+            vpnLogPanel.scrollTop = vpnLogPanel.scrollHeight;
+        }
+
+        function updateProgress(current, total, status, successCount, failedCount, verifCount) {
+            const pct = Math.round((current / total) * 100);
+            progressPercentage.innerText = `${pct}%`;
+
+            const offset = 314.16 - (314.16 * pct) / 100;
+            progressIndicator.style.strokeDashoffset = offset;
+
+            progressDetail.innerText = `Memproses email ke-${current} dari ${total} (${status})`;
+
+            if (successCount !== undefined) document.getElementById('stat-success-count').innerText = successCount;
+            if (failedCount !== undefined) document.getElementById('stat-failed-count').innerText = failedCount;
+            if (verifCount !== undefined) document.getElementById('stat-verif-count').innerText = verifCount;
+        }
+
+        function setFormDisabled(disabled) {
+            aliasInput.disabled = disabled;
+            emailsListInput.disabled = disabled;
+            dropboxUrlInput.disabled = disabled;
+            useDirectCheckbox.disabled = disabled;
+            useWarpCheckbox.disabled = disabled;
+            useSocks5Checkbox.disabled = disabled;
+            usePsiphonCheckbox.disabled = disabled;
+            socks5HostInput.disabled = disabled;
+            pwRandomRadio.disabled = disabled;
+            pwFixedRadio.disabled = disabled;
+            fixedPasswordInput.disabled = disabled;
+            debugProxyCheckbox.disabled = disabled;
+        }
+
+        function updateStatus(status) {
+            statusBadge.className = 'status-badge';
+
+            if (status === 'running') {
+                statusBadge.classList.add('status-running');
+                statusText.innerText = 'Memproses';
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                setFormDisabled(true);
+            } else if (status === 'success') {
+                statusBadge.classList.add('status-success');
+                statusText.innerText = 'Selesai';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                setFormDisabled(false);
+            } else if (status === 'idle') {
+                statusBadge.classList.add('status-idle');
+                statusText.innerText = 'Standby';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                setFormDisabled(false);
+            } else if (status === 'error') {
+                statusBadge.classList.add('status-error');
+                statusText.innerText = 'Error';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                setFormDisabled(false);
+            } else if (status === 'stopped') {
+                statusBadge.className = 'status-badge status-idle';
+                statusText.innerText = 'Dihentikan';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                setFormDisabled(false);
+            }
+        }
+
+        function updateWorkerStatusDisplay(status) {
+            statusBadge.className = 'status-badge';
+            statusText.innerText = status;
+
+            if (status === 'BOOT') {
+                statusBadge.classList.add('status-running'); // Blue/purple
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                setFormDisabled(false);
+            } else if (status === 'PROCESSING') {
+                statusBadge.classList.add('status-running'); // Blue/purple
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                setFormDisabled(true);
+            } else if (status === 'FINISH') {
+                statusBadge.classList.add('status-success'); // Green
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                setFormDisabled(false);
+            } else if (status === 'IDLE') {
+                statusBadge.classList.add('status-idle'); // Gray
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                setFormDisabled(false);
+            }
+        }
+
+        let idleInterval = null;
+
+        function showIdleWarning(secondsLeft) {
+            if (idleInterval) clearInterval(idleInterval);
+            idleModal.classList.add('open');
+            let timeLeft = secondsLeft || 60;
+            idleCountdown.innerText = timeLeft;
+
+            idleInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(idleInterval);
+                    idleInterval = null;
+                    hideIdleWarning();
+                } else {
+                    idleCountdown.innerText = timeLeft;
+                }
+            }, 1000);
+        }
+
+        function hideIdleWarning() {
+            if (idleInterval) {
+                clearInterval(idleInterval);
+                idleInterval = null;
+            }
+            idleModal.classList.remove('open');
+        }
+
+        idleYesBtn.addEventListener('click', () => {
+            fetch('/api/worker-stat/extend', { method: 'POST' })
+                .then(() => hideIdleWarning())
+                .catch(() => {});
+        });
+
+        idleNoBtn.addEventListener('click', () => {
+            fetch('/api/worker-stat/idle', { method: 'POST' })
+                .then(() => hideIdleWarning())
+                .catch(() => {});
+        });
+
+        startBtn.addEventListener('click', () => {
+            const alias        = aliasInput.value.trim();
+            const url          = dropboxUrlInput.value.trim();
+            const emails       = emailsListInput.value.trim();
+            let useDirect = document.getElementById('use-direct').checked;
+            let useWarp = document.getElementById('use-warp').checked;
+            let useSocks5 = useSocks5Checkbox.checked;
+            let usePsiphon = usePsiphonCheckbox.checked;
+            let socks5Host = socks5HostInput.value.trim();
+
+            if (!useDirect && !useWarp && !useSocks5 && !usePsiphon) {
+                alert('Pilih setidaknya satu tipe koneksi!');
+                return;
+            }
+
+            if (useSocks5 && !socks5Host) {
+                alert('Silakan masukkan Socks5 Host:Port!');
+                return;
+            }
+
+            const useHeadless  = true;
+            const passwordMode = pwFixedRadio.checked ? 'fixed' : 'random';
+            const fixedPassword = fixedPasswordInput.value.trim() || 'Aa12345678*';
+            const uaMode       = uaGenerateRadio.checked ? 'generate' : 'extension';
+            
+            const deviceTypes = [];
+            if (document.getElementById('dt-desktop').checked) deviceTypes.push('desktop');
+            if (document.getElementById('dt-mobile').checked) deviceTypes.push('mobile');
+            if (document.getElementById('dt-tablet').checked) deviceTypes.push('tablet');
+            
+            const emailMode    = emAutoRadio.checked ? 'auto' : 'manual';
+            const domain       = autoDomainInput.value.trim();
+            const count        = parseInt(autoCountInput.value) || 10;
+            const globalTimeout = parseInt(globalTimeoutInput.value) || 30;
+            const globalRetry  = parseInt(globalRetryInput.value) || 3;
+            const daemonTimeout = parseInt(daemonTimeoutInput.value) || 120;
+
+            if (emailMode === 'manual' && !emails) {
+                alert('Silakan masukkan minimal satu alamat email!');
+                return;
+            }
+            if (emailMode === 'auto' && (!domain || count < 1)) {
+                alert('Silakan masukkan nama domain dan jumlah email yang valid!');
+                return;
+            }
+
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                switchTab('progress');
+                logPanel.innerHTML = '';
+                successCountEl.innerText = '0';
+                failedCountEl.innerText = '0';
+
+                // Log client info
+                appendLog('log-info', `[Info] User Agent: ${navigator.userAgent}`);
+                fetch('https://api.ipify.org?format=json')
+                    .then(res => res.json())
+                    .then(data => appendLog('log-info', `[Info] Public IP (client): ${data.ip}`))
+                    .catch(() => {});
+
+                appendLog('log-info', `[Dashboard] Mode Email: ${emailMode === 'auto' ? 'Auto Generate (' + count + ' @' + domain + ')' : 'Manual Input'}`);
+                appendLog('log-info', `[Dashboard] Pengaturan: Timeout ${globalTimeout}s, Retry ${globalRetry}x, Daemon ${daemonTimeout}s`);
+                appendLog('log-info', `[Dashboard] Mode Password: ${passwordMode === 'fixed' ? 'Fixed (' + fixedPassword + ')' : 'Random'}`);
+                appendLog('log-info', '[Dashboard] Mengirimkan data formulir registrasi...');
+
+                socket.send(JSON.stringify({
+                    action: 'start',
+                    alias,
+                    url,
+                    emails,
+                    emailMode,
+                    domain,
+                    count,
+                    globalTimeout,
+                    globalRetry,
+                    daemonTimeout: parseInt(document.getElementById('daemon-timeout').value, 10),
+                    useDirect: useDirect,
+                    useWarp: useWarp,
+                    useSocks5: useSocks5,
+                    usePsiphon: usePsiphon,
+                    socks5Host: socks5Host,
+                    useHeadless: true,
+                    passwordMode,
+                    fixedPassword,
+                    uaMode,
+                    deviceTypes,
+                    debugProxy: debugProxyCheckbox.checked
+                }));
+            } else {
+                alert('WebSocket belum siap. Silakan muat ulang halaman.');
+            }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                appendLog('log-warn', '[Dashboard] Mengirimkan perintah berhenti...');
+                socket.send(JSON.stringify({ action: 'stop' }));
+            }
+        });
+
+        clearBtn.addEventListener('click', () => { logPanel.innerHTML = ''; });
+    </script>
+</body>
+</html>

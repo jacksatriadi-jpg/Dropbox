@@ -13,7 +13,11 @@
   "type": "commonjs",
   "dependencies": {
     "@playwright/test": "^1.61.0",
+    "express": "^5.2.1",
     "playwright": "^1.61.0",
-    "proxifly": "^3.0.1"
+    "proxifly": "^3.0.1",
+    "socks-proxy-agent": "^10.1.0",
+    "top-user-agents": "^2.1.118",
+    "ws": "^8.21.0"
   }
 }
