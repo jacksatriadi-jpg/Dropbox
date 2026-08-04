@@ -1175,9 +1175,13 @@ async function registerSingleEmail(url, email, proxyType, proxyHost, isInit, abo
                 }
 
                 try {
-                    // Step 1: Go to dropbox.com/home
+                    // Step 1: Go to dropbox.com/home - wait for full load
                     console.log(`[Navigasi] Ke dropbox.com/home (timeout ${globalTimeout} detik)...`);
-                    await page.goto('https://www.dropbox.com/home', { waitUntil: 'domcontentloaded', timeout: gtMs });
+                    await page.goto('https://www.dropbox.com/home', { waitUntil: 'networkidle', timeout: gtMs });
+                    
+                    // Wait for page to be fully ready - avatar appears after login state loads
+                    console.log('[Browser] Menunggu halaman home siap (avatar muncul)...');
+                    await page.waitForTimeout(3000);
                     
                     // Step 2: Click avatar/nickname icon in top right
                     console.log('[Browser] Mencari avatar/nickname di pojok kanan atas...');
@@ -1192,12 +1196,17 @@ async function registerSingleEmail(url, email, proxyType, proxyHost, isInit, abo
                         'button:has(svg[data-icon="person"])',
                         '[role="button"][aria-haspopup="menu"]',
                         'header button[aria-expanded]',
+                        // New Dropbox UI selectors
+                        'button[aria-label="User menu"]',
+                        'button[aria-label="Menu pengguna"]',
+                        '[data-testid="user-menu-button"]',
+                        'header [role="button"]:last-child',
                     ];
                     
                     let avatarClicked = false;
                     for (const sel of avatarSelectors) {
                         try {
-                            if (await page.isVisible(sel, { timeout: 3000 })) {
+                            if (await page.isVisible(sel, { timeout: 5000 })) {
                                 await page.click(sel);
                                 console.log(`[Browser] ✓ Avatar diklik via: ${sel}`);
                                 avatarClicked = true;
@@ -1207,12 +1216,13 @@ async function registerSingleEmail(url, email, proxyType, proxyHost, isInit, abo
                     }
                     
                     if (!avatarClicked) {
-                        console.log('[Browser] ⚠️ Avatar tidak ketemu via selector, coba click coordinate fallback...');
+                        console.log('[Browser] ⚠️ Avatar tidak ketemu via selector, coba coordinate fallback...');
                         // Fallback: click top-right area (avatar usually there)
                         const viewport = page.viewportSize();
                         if (viewport) {
-                            await page.mouse.click(viewport.width - 50, 50);
+                            await page.mouse.click(viewport.width - 60, 60);
                             avatarClicked = true;
+                            console.log('[Browser] ✓ Coordinate fallback click done');
                         }
                     }
                     
@@ -1220,10 +1230,10 @@ async function registerSingleEmail(url, email, proxyType, proxyHost, isInit, abo
                         throw new Error('Gagal klik avatar/nickname');
                     }
                     
-                    await page.waitForTimeout(1000); // wait for dropdown menu
+                    await page.waitForTimeout(1500); // wait for dropdown menu to fully open
                     
                     // Step 3: Click "Settings" in dropdown
-                    console.log('[Browser] Mencari menu Settings...');
+                    console.log('[Browser] Mencari menu Settings di dropdown...');
                     const settingsSelectors = [
                         'a:has-text("Settings")',
                         'a:has-text("Pengaturan")',
@@ -1233,12 +1243,15 @@ async function registerSingleEmail(url, email, proxyType, proxyHost, isInit, abo
                         '[role="menuitem"]:has-text("Pengaturan")',
                         'a[href*="/account"]',
                         'a[href*="/settings"]',
+                        // New Dropbox UI
+                        '[data-testid="account-settings-link"]',
+                        '[data-testid="settings-link"]',
                     ];
                     
                     let settingsClicked = false;
                     for (const sel of settingsSelectors) {
                         try {
-                            if (await page.isVisible(sel, { timeout: 3000 })) {
+                            if (await page.isVisible(sel, { timeout: 5000 })) {
                                 await page.click(sel);
                                 console.log(`[Browser] ✓ Settings diklik via: ${sel}`);
                                 settingsClicked = true;
@@ -1248,6 +1261,15 @@ async function registerSingleEmail(url, email, proxyType, proxyHost, isInit, abo
                     }
                     
                     if (!settingsClicked) {
+                        // Debug: dump dropdown content
+                        console.log('[Browser] ⚠️ Settings tidak ketemu, dump dropdown...');
+                        try {
+                            const dropdownContent = await page.evaluate(() => {
+                                const menus = document.querySelectorAll('[role="menu"], [role="listbox"], .dropdown-menu, [data-testid*="menu"]');
+                                return Array.from(menus).map(m => m.innerText).join('\n---\n');
+                            });
+                            console.log('[DEBUG] Dropdown content:', dropdownContent);
+                        } catch (e) {}
                         throw new Error('Gagal klik Settings di dropdown');
                     }
                     
