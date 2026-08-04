@@ -1156,8 +1156,8 @@ async function registerSingleEmail(url, email, proxyType, proxyHost, isInit, abo
                     }
                 }
 
-            // ── Verify email flow ──────
-            console.log('\n[Browser] Membuka halaman Settings untuk verifikasi email...');
+            // ── Verify email flow (NEW: home -> avatar -> settings -> general -> verify) ──────
+            console.log('\n[Browser] Memulai verifikasi email via dropbox.com/home -> Avatar -> Settings...');
             
             let verifyClicked = false;
             let emailSent = false;
@@ -1171,56 +1171,191 @@ async function registerSingleEmail(url, email, proxyType, proxyHost, isInit, abo
                 }
 
                 try {
-                    // Direct navigation to settings bypasses the need to click the account menu
-                    console.log(`[Navigasi] Ke halaman Settings/Account (timeout ${globalTimeout} detik)...`);
-                    await page.goto('https://www.dropbox.com/account', { waitUntil: 'domcontentloaded', timeout: gtMs });
+                    // Step 1: Go to dropbox.com/home
+                    console.log(`[Navigasi] Ke dropbox.com/home (timeout ${globalTimeout} detik)...`);
+                    await page.goto('https://www.dropbox.com/home', { waitUntil: 'domcontentloaded', timeout: gtMs });
                     
-                    // Click Verify email button (aria-label="Verify email" or class contains account-key-value-block__link)
+                    // Step 2: Click avatar/nickname icon in top right
+                    console.log('[Browser] Mencari avatar/nickname di pojok kanan atas...');
+                    const avatarSelectors = [
+                        'button[aria-label*="Account"]',
+                        'button[aria-label*="akun"]',
+                        'button[aria-label*="Profile"]',
+                        'button[aria-label*="Profil"]',
+                        'button[data-testid="account-menu-button"]',
+                        'div[data-testid="account-menu-button"]',
+                        'button:has(svg[data-icon="user"])',
+                        'button:has(svg[data-icon="person"])',
+                        '[role="button"][aria-haspopup="menu"]',
+                        'header button[aria-expanded]',
+                    ];
+                    
+                    let avatarClicked = false;
+                    for (const sel of avatarSelectors) {
+                        try {
+                            if (await page.isVisible(sel, { timeout: 3000 })) {
+                                await page.click(sel);
+                                console.log(`[Browser] ✓ Avatar diklik via: ${sel}`);
+                                avatarClicked = true;
+                                break;
+                            }
+                        } catch (e) {}
+                    }
+                    
+                    if (!avatarClicked) {
+                        console.log('[Browser] ⚠️ Avatar tidak ketemu via selector, coba click coordinate fallback...');
+                        // Fallback: click top-right area (avatar usually there)
+                        const viewport = page.viewportSize();
+                        if (viewport) {
+                            await page.mouse.click(viewport.width - 50, 50);
+                            avatarClicked = true;
+                        }
+                    }
+                    
+                    if (!avatarClicked) {
+                        throw new Error('Gagal klik avatar/nickname');
+                    }
+                    
+                    await page.waitForTimeout(1000); // wait for dropdown menu
+                    
+                    // Step 3: Click "Settings" in dropdown
+                    console.log('[Browser] Mencari menu Settings...');
+                    const settingsSelectors = [
+                        'a:has-text("Settings")',
+                        'a:has-text("Pengaturan")',
+                        'button:has-text("Settings")',
+                        'button:has-text("Pengaturan")',
+                        '[role="menuitem"]:has-text("Settings")',
+                        '[role="menuitem"]:has-text("Pengaturan")',
+                        'a[href*="/account"]',
+                        'a[href*="/settings"]',
+                    ];
+                    
+                    let settingsClicked = false;
+                    for (const sel of settingsSelectors) {
+                        try {
+                            if (await page.isVisible(sel, { timeout: 3000 })) {
+                                await page.click(sel);
+                                console.log(`[Browser] ✓ Settings diklik via: ${sel}`);
+                                settingsClicked = true;
+                                break;
+                            }
+                        } catch (e) {}
+                    }
+                    
+                    if (!settingsClicked) {
+                        throw new Error('Gagal klik Settings di dropdown');
+                    }
+                    
+                    // Step 4: Wait for Settings page, ensure General tab active
+                    console.log('[Browser] Menunggu halaman Settings load...');
+                    await page.waitForLoadState('domcontentloaded', { timeout: gtMs });
+                    await page.waitForTimeout(2000);
+                    
+                    // Make sure we're on General tab (usually default)
+                    const generalTabSelectors = [
+                        'button[role="tab"]:has-text("General")',
+                        'button[role="tab"]:has-text("Umum")',
+                        'a[href*="/account/general"]',
+                        '[data-testid="general-tab"]',
+                    ];
+                    for (const sel of generalTabSelectors) {
+                        try {
+                            if (await page.isVisible(sel, { timeout: 2000 })) {
+                                await page.click(sel);
+                                console.log(`[Browser] ✓ Tab General aktif via: ${sel}`);
+                                break;
+                            }
+                        } catch (e) {}
+                    }
+                    
+                    // Step 5: Scroll down to find "Verify email" 
+                    console.log('[Browser] Scroll ke bawah cari "Verify email"...');
+                    await page.evaluate(() => window.scrollBy(0, 500));
+                    await page.waitForTimeout(1000);
+                    await page.evaluate(() => window.scrollBy(0, 500));
+                    await page.waitForTimeout(1000);
+                    
+                    // Step 6: Click "Verify email" button/link
                     const verifySelectors = [
-                        'button[aria-label="Verify email"]',
-                        'button.account-key-value-block__link:has-text("Verify email")',
                         'button:has-text("Verify email")',
                         'button:has-text("Verifikasi email")',
+                        'a:has-text("Verify email")',
+                        'a:has-text("Verifikasi email")',
+                        'button[aria-label*="Verify email"]',
+                        'button[aria-label*="Verifikasi email"]',
+                        '[data-testid="verify-email-button"]',
+                        'button.account-key-value-block__link:has-text("Verify email")',
+                        'button.account-key-value-block__link:has-text("Verifikasi email")',
                     ];
                     
                     let verifyBtnFound = false;
                     for (const sel of verifySelectors) {
                         try {
-                            await page.waitForSelector(sel, { state: 'visible', timeout: gtMs / 2 });
-                            verifyBtnFound = true;
-                            console.log(`[Browser] ✓ Tombol Verify terdeteksi via waitForSelector: ${sel}`);
-                            break;
-                        } catch (_) {}
+                            if (await page.isVisible(sel, { timeout: 3000 })) {
+                                await page.click(sel);
+                                console.log(`[Browser] ✓ Tombol Verify email diklik via: ${sel}`);
+                                verifyBtnFound = true;
+                                verifyClicked = true;
+                                break;
+                            }
+                        } catch (e) {}
                     }
-
+                    
                     if (!verifyBtnFound) {
-                        console.log(`[Browser] waitForSelector habis, scroll dan polling untuk Verify...`);
-                        try { await page.evaluate(() => window.scrollBy(0, 200)); } catch (_) {}
-                        await page.waitForTimeout(2000);
-
-                        const verifyDeadline = Date.now() + (gtMs / 2);
-                        while (Date.now() < verifyDeadline && !verifyBtnFound) {
+                        // Fallback: scroll more and search all buttons/links
+                        console.log('[Browser] Scroll lebih dalam & polling untuk Verify email...');
+                        for (let i = 0; i < 5; i++) {
+                            await page.evaluate(() => window.scrollBy(0, 300));
+                            await page.waitForTimeout(500);
                             for (const sel of verifySelectors) {
                                 try {
-                                    const isVisible = await page.locator(sel).first().isVisible();
-                                    if (isVisible) { verifyBtnFound = true; break; }
+                                    const el = page.locator(sel).first();
+                                    if (await el.isVisible({ timeout: 1000 })) {
+                                        await el.click();
+                                        console.log(`[Browser] ✓ Verify email ditemukan & diklik via polling: ${sel}`);
+                                        verifyBtnFound = true;
+                                        verifyClicked = true;
+                                        break;
+                                    }
                                 } catch (e) {}
                             }
-                            if (!verifyBtnFound) await page.waitForTimeout(1000);
+                            if (verifyBtnFound) break;
                         }
                     }
-
-                    if (verifyBtnFound) {
-                        for (const sel of verifySelectors) {
-                            try {
-                                if (await page.isVisible(sel)) {
-                                    await page.click(sel);
-                                    console.log('[Browser] ✓ Tombol Verify email diklik, menunggu modal...');
-                                    verifyClicked = true;
-                                    break;
-                                }
-                            } catch (e) {}
-                        }
+                    
+                    if (!verifyBtnFound) {
+                        throw new Error('Tombol Verify email tidak ditemukan setelah scroll');
+                    }
+                    
+                    // Step 7: Wait for modal, click "Send email" / "Kirim email"
+                    console.log('[Browser] Menunggu modal verifikasi...');
+                    await page.waitForTimeout(2000);
+                    
+                    const sendEmailSelectors = [
+                        'button.js-email-modal-button.dig-Button--primary',
+                        'button:has-text("Send email")',
+                        'button:has-text("Kirim email")',
+                        'button:has-text("Send verification email")',
+                        'button:has-text("Kirim email verifikasi")',
+                        '[data-testid="send-verification-email"]',
+                    ];
+                    
+                    let sendBtnFound = false;
+                    for (const sel of sendEmailSelectors) {
+                        try {
+                            if (await page.isVisible(sel, { timeout: 5000 })) {
+                                await page.click(sel);
+                                console.log(`✅ [Browser] Email verifikasi berhasil dikirim untuk ${email} via: ${sel}!`);
+                                emailSent = true;
+                                sendBtnFound = true;
+                                break;
+                            }
+                        } catch (e) {}
+                    }
+                    
+                    if (!sendBtnFound) {
+                        console.log('[Browser] ⚠️ Tombol Send email tidak ditemukan di modal.');
                     }
 
                     if (verifyClicked) {
