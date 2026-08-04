@@ -897,11 +897,38 @@ async function registerSingleEmail(url, email, proxyType, proxyHost, isInit, abo
         // Loop to check if the user has successfully registered
         console.log(`\n[Langkah 3] Menunggu redirect URL sukses pendaftaran (timeout ${globalTimeout} detik)...`);
         const regDeadline = Date.now() + gtMs;
+        let previewShown = false;
+        const previewDelay = 15000; // 15 detik sebelum preview ditampilkan
+        const previewStartTime = Date.now();
         while (Date.now() < regDeadline) {
             await page.waitForTimeout(2000);
             await checkTooManyAttempts(page);
             const currentUrl = page.url();
-            
+
+            // Preview browser setelah 15 detik saat mendeteksi perubahan URL
+            if (!previewShown && (Date.now() - previewStartTime >= previewDelay)) {
+                try {
+                    console.log(`[Preview] Menampilkan preview browser setelah ${previewDelay/1000} detik...`);
+                    const screenshot = await page.screenshot({ 
+                        type: 'jpeg', 
+                        quality: 60,
+                        fullPage: false // hanya viewport, ukuran kecil
+                    });
+                    const base64Screenshot = screenshot.toString('base64');
+                    if (global.safeSend) {
+                        global.safeSend({
+                            type: 'browser_preview',
+                            preview: base64Screenshot,
+                            url: currentUrl,
+                            timestamp: Date.now()
+                        });
+                    }
+                    previewShown = true;
+                } catch (previewErr) {
+                    console.log(`[Preview] Gagal mengambil screenshot: ${previewErr.message}`);
+                }
+            }
+
             // Check for trial_first, verify_email, or general successful redirection strings
             if (currentUrl.includes('trial_first') || currentUrl.includes('verify_email') || (!currentUrl.includes('/register') && !currentUrl.includes('/login') && (currentUrl.includes('/home') || currentUrl.includes('/personal') || currentUrl.includes('/dashboard') || currentUrl.includes('dropbox.com/h')))) {
                 console.log(`\n✓ Pendaftaran/Verifikasi terdeteksi! URL saat ini: ${currentUrl}`);
@@ -915,7 +942,7 @@ async function registerSingleEmail(url, email, proxyType, proxyHost, isInit, abo
             throw new Error("NO_URL_CHANGE");
         }
 
-        } catch (innerError) {
+    } catch (innerError) {
             const errMsg = (innerError.message || '').toLowerCase();
 
             // ── BROWSER_KILL_REQUIRED pass-through ───────────────────────────
